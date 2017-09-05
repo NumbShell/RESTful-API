@@ -10,46 +10,6 @@ var index = require('./routes/index');
 var app = express();
 var server = http.createServer(app);
 
-//Dummy data
-data = {
-    'Dark Souls': {
-        title: 'Dark Souls',
-        desc: 'A hardcore game!',
-        genres: [
-            'action',
-            'roleplay'
-        ],
-        developers: 'From Software',
-        release: '2011',
-        id: '0'
-    },
-
-    'World of Warcraft': {
-        title: 'World of Warcraft',
-        desc: 'A MMORPG',
-        genres: [
-            'mmorpg',
-            'action',
-            'adventure'
-        ],
-        developers: 'Blizzard',
-        release: '2004',
-        id: '1'
-    },
-
-    'Starcraft 2': {
-        title: 'Starcraft 2',
-        desc: 'A futuristic top-down strategy game',
-        genres: [
-            'strategy',
-            'action',
-        ],
-        developers: 'Blizzard',
-        release: '27 july 2010',
-        id: '2'
-    }
-};
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
