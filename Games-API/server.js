@@ -41,9 +41,10 @@ app.use(function(err, req, res, next) {
 });
 
 //Listening to port 3000 (localhost)
-server.listen(3000, function(err) {
+var port = 3000;
+server.listen(port, function(err) {
     if(err) throw err;
-   console.log('Express server Listening on port ' + server.address().port);
+   console.log('Express server listening on port ' + port);
 });
 
 module.exports = app;

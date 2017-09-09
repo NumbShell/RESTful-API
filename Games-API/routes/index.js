@@ -1,63 +1,57 @@
 var express = require('express');
+var http = require('http');
+var PouchDB = require('pouchdb');
+
 var router = express.Router();
-var db = require('../database');
+var database = new PouchDB('http://localhost:5984/games_db');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+
+//Retrieve all documents
+router.get('/games', function(req, res, next) {
+    database.allDocs({
+        include_docs: true
+    }).then(function(result) {
+        res.send(result.rows.map(function(doc) {
+            return doc.doc;
+        }))
+    }, function(err) {
+       res.status(400).send(err);
+    });
 });
 
-//Retrieve all games.
-router.get('/api/games', function(req, res, next) {
-  res.json(db);
+//Add a new document
+router.post('/games', function(req, res, next) {
+    database.post({
+        name: req.body.name
+    }).then(function(response) {
+        res.send(response);
+    }).catch(function(err) {
+        console.log(err);
+        res.send(err);
+    })
 });
 
-//Retrieve a game based on id.
-router.get('/api/games/:id', function(req, res, next) {
-    for(key in db.games) {
-      if(db.games[key].id === req.params.id) {
-        res.json(db.games[key]);
-      }
-    }
+//Update a document
+router.put('/games', function(req, res, next) {
+    database.get(req.body.id).then(function(result) {
+        result.name = req.body.name;
+        database.put(result);
+        res.send(result);
+    }, function(error) {
+        res.status(400).send(error);
+    });
 });
 
-//Retrieve all games from a certain year.
-router.get('/api/games/year/:year', function(req, res, next) {
-    var packet = {};
-    for(key in db.games) {
-        var data = db.games[key].release.split(" ");
-        var year = data[data.length-1];
-        if(year === req.params.year) {
-            packet[key] = db.games[key];
-        }
-    }
-    res.json(packet);
-    return console.log('Error');
-});
-
-//Add a new game.
-router.post('/api/games', function(req, res, next) {
-    var data = req.body;
-    db.games[data.id] = data;
-    res.json(data);
-});
-
-//Update a game based on id.
-router.put('/api/games/:id', function(req, res, next) {
-  /*
-    Will be done when the database is added.
-   */
-
-});
-
-//Delete a game based on id.
-router.delete('/api/games/:id', function(req, res, next) {
-    for(key in db.games) {
-        if(db.games[key].id === req.params.id) {
-            delete db.games[key];
-            res.json(key);
-        }
-    }
+//Remove a specific document
+router.delete('/games', function(req, res, next) {
+    database.get(req.body.id).then(function(doc) {
+        return database.remove(doc);
+    }).then(function (result) {
+        res.send(result);
+    }).catch(function (err) {
+        console.log(err);
+        res.send(err);
+    })
 });
 
 module.exports = router;
