@@ -6,6 +6,17 @@ var router = express.Router();
 var database = new PouchDB('http://localhost:5984/games_db');
 
 
+
+//Sync with CouchDB
+var sync = PouchDB.sync(database, 'http://localhost:5984/games_db', {
+    live: true,
+    retry: true
+}).on('complete', function(info) {
+    console.log("Database up to date");
+}).on('error', function(err) {
+    console.log(err);
+});
+
 //Retrieve all games
 router.get('/games', function(req, res, next) {
     database.allDocs({
@@ -29,7 +40,7 @@ router.get('/games/:company', function(req, res, next) {
             if(game.doc.developers != undefined && game.doc.developers[0] === req.params.company) {
                 games.push(game.doc);
             }
-        })
+        });
         res.send(games);
     }, function(err) {
         res.status(400).send(err);
