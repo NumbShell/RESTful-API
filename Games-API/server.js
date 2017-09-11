@@ -8,7 +8,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 
 var app = express();
-var server = http.createServer(app);
+
+var port = 3000;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,8 +42,7 @@ app.use(function(err, req, res, next) {
 });
 
 //Listening to port 3000 (localhost)
-var port = 3000;
-server.listen(port, function(err) {
+app.listen(port, function(err) {
     if(err) throw err;
    console.log('Express server listening on port ' + port);
 });
